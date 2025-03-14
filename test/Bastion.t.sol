@@ -85,7 +85,7 @@ contract BastionTest is Test {
         console.logBytes32(approval.salt);
         console.log("Iteration : ", count);
 
-        Bastion container = Bastion(expectedBastion);
+        Bastion bastion = Bastion(expectedBastion);
 
         VmSafe.SignedDelegation memory auth =
             VmSafe.SignedDelegation({v: v - 27, r: r, s: s, nonce: uint64(0), implementation: address(factory.impl())});
@@ -101,19 +101,19 @@ contract BastionTest is Test {
 
         factory.checkSig(approval, block.chainid, v, r, s);
 
-        assertEq(container.owner(), owner);
-        assertEq(factory.allowance(owner, address(container), address(token)), allowance);
+        assertEq(bastion.owner(), owner);
+        assertEq(factory.allowance(owner, address(bastion), address(token)), allowance);
 
         Call[] memory calls = new Call[](1);
         calls[0] = Call({to: address(m), value: 0, data: abi.encodeWithSelector(Mock.foo.selector)});
 
         vm.prank(owner);
-        container.executeWithAllowance(calls, address(token), 10);
+        bastion.executeWithAllowance(calls, address(token), 10);
 
-        assertEq(factory.allowance(owner, address(container), address(token)), allowance - 10);
+        assertEq(factory.allowance(owner, address(bastion), address(token)), allowance - 10);
         assertEq(token.allowance(owner, address(factory)), 5000 - 10);
         assertEq(token.balanceOf(owner), 10000 - 10);
-        assertEq(token.balanceOf(address(container)), 10);
+        assertEq(token.balanceOf(address(bastion)), 10);
         assertEq(m.bar(), 2);
     }
 }
