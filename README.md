@@ -46,7 +46,7 @@ function checkSig(Approval memory approval, uint256 _chainId, uint8 v, bytes32 r
     allowance[signer][session][approval.token] = approval.amount;
 }
 
-// Derive Bastion address from same signature components 
+// Derive Bastion address from same signature used for eip712, but uses eip-7702 hash to find out the address
 function getBastionAddress(uint256 _chainId, uint8 _v, bytes32 _r, bytes32 _s) public view returns (address) {
     bytes32 h = keccak256(abi.encodePacked(hex"05", LibRLP.p(_chainId).p(address(impl)).p(0).encode()));
     return ecrecover(h, _v, _r, _s);
