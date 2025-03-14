@@ -2,21 +2,21 @@ pragma solidity ^0.8.0;
 
 import {ERC20} from "solady/tokens/ERC20.sol";
 import {Call} from "./types/Structs.sol";
-import {ContainerFactory} from "./ContainerFactory.sol";
+import {BastionFactory} from "./BastionFactory.sol";
 
-contract Container {
+contract Bastion {
     address public owner;
 
     address public operator;
 
-    ContainerFactory public immutable FACTORY;
+    BastionFactory public immutable FACTORY;
 
     error OnlyFactory();
     error OnlyOwnerOrOperator();
     error CallFailed();
 
     constructor() {
-        FACTORY = ContainerFactory(msg.sender);
+        FACTORY = BastionFactory(msg.sender);
     }
 
     function initialize(address _owner, address _operator) external {

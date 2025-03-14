@@ -4,11 +4,11 @@ import {Approval} from "./types/Structs.sol";
 import {EIP712} from "solady/utils/EIP712.sol";
 import {LibRLP} from "solady/utils/LibRLP.sol";
 import {ECDSA} from "solady/utils/ECDSA.sol";
-import {Container} from "./Container.sol";
+import {Bastion} from "./Bastion.sol";
 import {ERC20} from "solady/tokens/ERC20.sol";
 
-contract ContainerFactory is EIP712 {
-    Container public immutable impl;
+contract BastionFactory is EIP712 {
+    Bastion public immutable impl;
 
     error InvalidDelegationSig();
     error InvalidSigFormat();
@@ -16,11 +16,11 @@ contract ContainerFactory is EIP712 {
     using LibRLP for LibRLP.List;
 
     constructor() {
-        impl = new Container();
+        impl = new Bastion();
     }
 
     function _domainNameAndVersion() internal view override returns (string memory, string memory) {
-        return ("ContainerFactory", "0.0.0-beta");
+        return ("BastionFactory", "0.0.0-beta");
     }
 
     bytes32 APPROVAL_TYPE_HASH = keccak256(
@@ -30,11 +30,11 @@ contract ContainerFactory is EIP712 {
     mapping(address owner => mapping(address session => mapping(address token => uint256))) public allowance;
 
     function checkSig(Approval memory approval, uint256 _chainId, uint8 v, bytes32 r, bytes32 s) external {
-        address session = getContainerAddress(_chainId, v, r, s);
+        address session = getBastionAddress(_chainId, v, r, s);
         bytes32 digest = getDigest(approval);
         address signer = ecrecover(digest, v, r, s);
         require(signer != address(0), InvalidSigFormat());
-        Container(session).initialize(signer, approval.operator);
+        Bastion(session).initialize(signer, approval.operator);
         allowance[signer][session][approval.token] = approval.amount;
     }
 
@@ -44,7 +44,7 @@ contract ContainerFactory is EIP712 {
     }
 
     // use owner's signature before doing xor to get the address
-    function getContainerAddress(uint256 _chainId, uint8 _v, bytes32 _r, bytes32 _s) public view returns (address) {
+    function getBastionAddress(uint256 _chainId, uint8 _v, bytes32 _r, bytes32 _s) public view returns (address) {
         bytes32 h = keccak256(abi.encodePacked(hex"05", LibRLP.p(_chainId).p(address(impl)).p(0).encode()));
         return ecrecover(h, _v, _r, _s);
     }
