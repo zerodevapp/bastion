@@ -115,5 +115,14 @@ contract BastionTest is Test {
         assertEq(token.balanceOf(owner), 10000 - 10);
         assertEq(token.balanceOf(address(bastion)), 10);
         assertEq(m.bar(), 2);
+
+        vm.prank(operator);
+        bastion.executeWithAllowance(calls, address(token), 10);
+
+        assertEq(factory.allowance(owner, address(bastion), address(token)), allowance - 20);
+        assertEq(token.allowance(owner, address(factory)), 5000 - 20);
+        assertEq(token.balanceOf(owner), 10000 - 20);
+        assertEq(token.balanceOf(address(bastion)), 20);
+        assertEq(m.bar(), 3);
     }
 }
