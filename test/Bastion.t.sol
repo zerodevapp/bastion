@@ -37,11 +37,12 @@ contract BastionTest is Test {
 
     address operator;
     uint256 operatorKey;
+    address ep;
 
     MockERC20 token;
 
     function setUp() external {
-        factory = new BastionFactory();
+        factory = new BastionFactory(ep);
         (owner, ownerKey) = makeAddrAndKey("Owner");
         (operator, operatorKey) = makeAddrAndKey("Opeartor");
         token = new MockERC20();
@@ -66,7 +67,7 @@ contract BastionTest is Test {
         assertEq(token.allowance(owner, address(factory)), 5000);
 
         Approval memory approval = Approval({
-            operator: operator,
+            operator: abi.encodePacked(operator),
             token: address(token),
             amount: allowance,
             domain: keccak256(abi.encodePacked("https://dashboard.zerodev.app")),

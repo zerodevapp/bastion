@@ -15,8 +15,8 @@ contract BastionFactory is EIP712 {
 
     using LibRLP for LibRLP.List;
 
-    constructor() {
-        impl = new Bastion();
+    constructor(address ep) {
+        impl = new Bastion(ep);
     }
 
     function _domainNameAndVersion() internal view override returns (string memory, string memory) {
@@ -24,7 +24,7 @@ contract BastionFactory is EIP712 {
     }
 
     bytes32 APPROVAL_TYPE_HASH = keccak256(
-        abi.encodePacked("Approval(address operator,address token,uint256 amount,bytes32 domain,bytes32 salt)")
+        abi.encodePacked("Approval(bytes operator,address token,uint256 amount,bytes32 domain,bytes32 salt)")
     );
 
     mapping(address owner => mapping(address session => mapping(address token => uint256))) public allowance;
@@ -54,7 +54,7 @@ contract BastionFactory is EIP712 {
             keccak256(
                 abi.encode(
                     APPROVAL_TYPE_HASH,
-                    approval.operator,
+                    keccak256(abi.encodePacked(approval.operator)),
                     approval.token,
                     approval.amount,
                     approval.domain,
