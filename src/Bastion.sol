@@ -19,6 +19,7 @@ contract Bastion {
     error OnlyFactory();
     error OnlyOwnerOrOperator();
     error OnlyEntryPoint();
+    error OnlyOwner();
     error CallFailed();
     error InvalidOperatorData();
 
@@ -31,6 +32,17 @@ contract Bastion {
         require(msg.sender == address(FACTORY), OnlyFactory());
         require(_operator.length == 20 || _operator.length == 64, InvalidOperatorData());
         owner = _owner;
+        operator = _operator;
+    }
+
+    function transferOwner(address _owner) external {
+        require(msg.sender == owner, OnlyOwner());
+        owner = _owner;
+    }
+
+    function changeOperator(bytes calldata _operator) external {
+        require(msg.sender == owner, OnlyOwner());
+        require(_operator.length == 20 || _operator.length == 64, InvalidOperatorData());
         operator = _operator;
     }
 
