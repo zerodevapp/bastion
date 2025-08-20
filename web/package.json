@@ -9,11 +9,13 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^1.80.0",
-    "@privy-io/wagmi": "^0.2.8",
-    "viem": "^2.10.3",
+    "@privy-io/react-auth": "^2.21.4",
+    "@privy-io/wagmi": "^1.0.6",
+    "@zerodev/ecdsa-validator": "^5.4.9",
+    "@zerodev/sdk": "^5.4.41",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "viem": "^2.34.0",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
@@ -25,5 +27,3 @@
     "vite": "^5.4.1"
   }
 }
-
-

@@ -2,31 +2,61 @@ import { createPublicClient, createWalletClient, custom, http } from 'viem';
 import { sepolia } from 'viem/chains';
 
 export const BASTION_FACTORY_ABI = [
-  { name: 'impl', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
-  { name: 'getDigest', type: 'function', stateMutability: 'view', inputs: [{
-      name: 'approval', type: 'tuple', components: [
-        { name: 'operator', type: 'bytes' },
-        { name: 'token', type: 'address' },
-        { name: 'amount', type: 'uint256' },
-        { name: 'domain', type: 'bytes32' },
-        { name: 'salt', type: 'bytes32' },
-      ],
-  }], outputs: [{ type: 'bytes32' }] },
-  { name: 'getBastionAddress', type: 'function', stateMutability: 'view', inputs: [
-      { name: 'chainId', type: 'uint256' }, { name: 'v', type: 'uint8' }, { name: 'r', type: 'bytes32' }, { name: 's', type: 'bytes32' }
-  ], outputs: [{ type: 'address' }] },
-  { name: 'checkSig', type: 'function', stateMutability: 'nonpayable', inputs: [{
-      name: 'approval', type: 'tuple', components: [
-        { name: 'operator', type: 'bytes' },
-        { name: 'token', type: 'address' },
-        { name: 'amount', type: 'uint256' },
-        { name: 'domain', type: 'bytes32' },
-        { name: 'salt', type: 'bytes32' },
-      ],
-  }, { name: 'chainId', type: 'uint256' }, { name: 'v', type: 'uint8' }, { name: 'r', type: 'bytes32' }, { name: 's', type: 'bytes32' }], outputs: [] },
-  { name: 'allowance', type: 'function', stateMutability: 'view', inputs: [
-      { name: 'owner', type: 'address' }, { name: 'session', type: 'address' }, { name: 'token', type: 'address' }
-  ], outputs: [{ type: 'uint256' }] },
+  { type: 'constructor', stateMutability: 'nonpayable', inputs: [
+    { name: 'ep', type: 'address', internalType: 'address' },
+  ]},
+  { type: 'function', name: 'allowance', stateMutability: 'view', inputs: [
+    { name: 'owner', type: 'address', internalType: 'address' },
+    { name: 'session', type: 'address', internalType: 'address' },
+    { name: 'token', type: 'address', internalType: 'address' },
+  ], outputs: [{ name: '', type: 'uint256', internalType: 'uint256' }] },
+  { type: 'function', name: 'checkSig', stateMutability: 'nonpayable', inputs: [
+    { name: 'approval', type: 'tuple', internalType: 'struct Approval', components: [
+      { name: 'operator', type: 'bytes', internalType: 'bytes' },
+      { name: 'token', type: 'address', internalType: 'address' },
+      { name: 'amount', type: 'uint256', internalType: 'uint256' },
+      { name: 'domain', type: 'bytes32', internalType: 'bytes32' },
+      { name: 'salt', type: 'bytes32', internalType: 'bytes32' },
+    ]},
+    { name: '_chainId', type: 'uint256', internalType: 'uint256' },
+    { name: 'v', type: 'uint8', internalType: 'uint8' },
+    { name: 'r', type: 'bytes32', internalType: 'bytes32' },
+    { name: 's', type: 'bytes32', internalType: 'bytes32' },
+  ], outputs: [] },
+  { type: 'function', name: 'consume', stateMutability: 'nonpayable', inputs: [
+    { name: '_owner', type: 'address', internalType: 'address' },
+    { name: '_token', type: 'address', internalType: 'address' },
+    { name: '_amount', type: 'uint256', internalType: 'uint256' },
+  ], outputs: [] },
+  { type: 'function', name: 'eip712Domain', stateMutability: 'view', inputs: [], outputs: [
+    { name: 'fields', type: 'bytes1', internalType: 'bytes1' },
+    { name: 'name', type: 'string', internalType: 'string' },
+    { name: 'version', type: 'string', internalType: 'string' },
+    { name: 'chainId', type: 'uint256', internalType: 'uint256' },
+    { name: 'verifyingContract', type: 'address', internalType: 'address' },
+    { name: 'salt', type: 'bytes32', internalType: 'bytes32' },
+    { name: 'extensions', type: 'uint256[]', internalType: 'uint256[]' },
+  ]},
+  { type: 'function', name: 'getBastionAddress', stateMutability: 'view', inputs: [
+    { name: '_chainId', type: 'uint256', internalType: 'uint256' },
+    { name: '_v', type: 'uint8', internalType: 'uint8' },
+    { name: '_r', type: 'bytes32', internalType: 'bytes32' },
+    { name: '_s', type: 'bytes32', internalType: 'bytes32' },
+  ], outputs: [{ name: '', type: 'address', internalType: 'address' }] },
+  { type: 'function', name: 'getDigest', stateMutability: 'view', inputs: [
+    { name: 'approval', type: 'tuple', internalType: 'struct Approval', components: [
+      { name: 'operator', type: 'bytes', internalType: 'bytes' },
+      { name: 'token', type: 'address', internalType: 'address' },
+      { name: 'amount', type: 'uint256', internalType: 'uint256' },
+      { name: 'domain', type: 'bytes32', internalType: 'bytes32' },
+      { name: 'salt', type: 'bytes32', internalType: 'bytes32' },
+    ]},
+  ], outputs: [{ name: '', type: 'bytes32', internalType: 'bytes32' }] },
+  { type: 'function', name: 'impl', stateMutability: 'view', inputs: [], outputs: [
+    { name: '', type: 'address', internalType: 'contract Bastion' },
+  ]},
+  { type: 'error', name: 'InvalidDelegationSig', inputs: [] },
+  { type: 'error', name: 'InvalidSigFormat', inputs: [] },
 ] as const;
 
 export const BASTION_ABI = [
